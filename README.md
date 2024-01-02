@@ -39,7 +39,7 @@ python my-beauty-calendar.py "other/example.png" 2024 0,0,0 255,255,255 64,64,64
 pyinstaller --onefile my-beauty-calendar.py
 ``` 
 
-4. Запустите скрипт **** с аналогичными п.2 аргументами (путь должен быть абсолютным):
+4. Запустите скрипт **starter.py** с аналогичными п.2 аргументами (путь должен быть абсолютным):
 ```shell
 python starter.py D:/.../my-beauty-calendar/other/example.png 2024 0,0,0 255,255,255 64,64,64 0,0,0 0.125
 ```
