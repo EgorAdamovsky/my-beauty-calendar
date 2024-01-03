@@ -3,21 +3,23 @@ import datetime
 import calendar
 import ctypes
 import cv2
-import sys
 import os
 
-# АРГУМЕНТЫ: ФАЙЛ ГОД ЦВЕТ-ТЕКСТА ЦВЕТ-ФОНА ЦВЕТ-ВЫХОДНЫХ ЦВЕТ-ТЕКУЩЕГО ПРОЗРАЧНОСТЬ
-file = sys.argv[1]
-year = int(sys.argv[2])
-_fc = sys.argv[3].split(',')
-_bc = sys.argv[4].split(',')
-_ec = sys.argv[5].split(',')
-_nc = sys.argv[6].split(',')
+# ЧТЕНИЕ КОНФИГА
+mycfg = open("config.txt", "r")
+data = mycfg.readlines()
+file = data[0].strip()
+year = int(data[1])
+_fc = data[2].split(',')
+_bc = data[3].split(',')
+_ec = data[4].split(',')
+_nc = data[5].split(',')
 fontcol = (int(_fc[2]), int(_fc[1]), int(_fc[0]))
 backcol = (int(_bc[2]), int(_bc[1]), int(_bc[0]))
 endcol = (int(_ec[2]), int(_ec[1]), int(_ec[0]))
 nowcol = (int(_nc[2]), int(_nc[1]), int(_nc[0]))
-over = float(sys.argv[7])
+over = float(data[6])
+mycfg.close()
 
 # НАСТРОЙКИ
 imsize = (1920, 1080)
@@ -110,10 +112,6 @@ for moon in range(12):
 # СОХРАНЕНИЕ
 fout = "calendar-" + str(year) + ".png"
 cv2.imwrite(fout, img)
-
-# ОТОБРАЖЕНИЕ
-# cv2.imshow("", img)
-# cv2.waitKey()
 
 # УСТАНОВКА НА РАБОЧИЙ СТОЛ
 ctypes.windll.user32.SystemParametersInfoW(20, 0, os.path.abspath(os.curdir) + "\\" + fout, 0)

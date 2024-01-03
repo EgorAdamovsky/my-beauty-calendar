@@ -1,18 +1,10 @@
+from pyshortcuts import make_shortcut
 import getpass
-import sys
 import os
 
-# АРГУМЕНТЫ: КАРТИНКА ГОД ЦВЕТ-ТЕКСТА ЦВЕТ-ФОНА ЦВЕТ-ВЫХОДНЫХ ЦВЕТ-ТЕКУЩЕГО ПРОЗРАЧНОСТЬ
-args = ""
-for i in range(8):
-    if i > 0:
-        args += sys.argv[i] + " "
-
 user = getpass.getuser()
-base_path = os.path.abspath(os.curdir)
-file_path = base_path + "\\dist\\my-beauty-calendar.exe"
-bat_path = "C:\\Users\\" + user + "\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\"
-with open(bat_path + '\\' + "my-beauty-calendar.bat", "w+") as bat_file:
-    bat_file.write('start "" ' + file_path + " " + args)
-
+base_path = os.path.abspath(os.curdir) + "/dist"
+file_path = base_path + "/my-beauty-calendar.exe"
+link_path = "C:/Users/" + user + "/AppData/Roaming/Microsoft/Windows/Start Menu/Programs/Startup/"
+make_shortcut(script=file_path, name='my-beauty-calendar', folder=link_path, working_dir=base_path)
 print("Готово!")

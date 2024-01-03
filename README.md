@@ -21,7 +21,7 @@
 pip install -r requirements.txt
 ```
 
-2. Запустите скрипт **my-beauty-calendar.py** со следующими аргументами:
+2. Подготовьте конфигурацию **config.txt**, которая должна находиться в одном каталоге с приложением:
     - **test.png** - путь к изображению Full HD качества
     - **2024** - выбранный год
     - **0,0,0** - цвет текста в модели RGB
@@ -30,8 +30,9 @@ pip install -r requirements.txt
     - **0,0,0** - цвет текущей даты в модели RGB
     - **0.125** - непрозрачность фона
 
+3. Если хотите протестировать, то запустите скрипт **my-beauty-calendar.py**. Иначе пропустите этот пункт:
 ```shell
-python my-beauty-calendar.py "other/example.png" 2024 0,0,0 255,255,255 64,64,64 0,0,0 0.125
+python my-beauty-calendar.py
 ```
 
 3. Сгенерируйте исполняемый файл:
@@ -39,9 +40,14 @@ python my-beauty-calendar.py "other/example.png" 2024 0,0,0 255,255,255 64,64,64
 pyinstaller --onefile my-beauty-calendar.py
 ``` 
 
-4. Запустите скрипт **starter.py** с аналогичными п.2 аргументами (путь должен быть абсолютным):
-```shell
-python starter.py D:/.../my-beauty-calendar/other/example.png 2024 0,0,0 255,255,255 64,64,64 0,0,0 0.125
+4. Скопируйте в каталог с приложением **my-beauty-calendar.exe** файл **config.txt**:
+```
+...\my-beauty-calendar\dist\my-beauty-calendar.exe
 ```
 
-Теперь при каждом запуске Windows изображение будет обновляться самостоятельно.
+5. Запустите скрипт **starter.py** для добавления возможности автозапуска:
+```shell
+python starter.py
+```
+
+Теперь при каждом старте Windows изображение будет обновляться самостоятельно.
