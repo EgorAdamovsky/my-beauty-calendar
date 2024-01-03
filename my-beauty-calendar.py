@@ -19,6 +19,7 @@ backcol = (int(_bc[2]), int(_bc[1]), int(_bc[0]))
 endcol = (int(_ec[2]), int(_ec[1]), int(_ec[0]))
 nowcol = (int(_nc[2]), int(_nc[1]), int(_nc[0]))
 over = float(data[6])
+nowpoint = data[7]
 mycfg.close()
 
 # НАСТРОЙКИ
@@ -95,11 +96,12 @@ for moon in range(12):
                             font, fontsize, fontcol)
 
             # текущий день
-            if ch == curday and moon + 1 == curmonth and curyear == year:
-                img = cv2.circle(img,
-                                 (offset[0] + tabsize * line + cellsize * j + int(cellsize / 3),
-                                  offset[1] + tabsize * row + cellsize * i - int(cellsize / 6)),
-                                 int(28 * fontsize), nowcol, 2)
+            if nowpoint == "true":
+                if ch == curday and moon + 1 == curmonth and curyear == year:
+                    img = cv2.circle(img,
+                                     (offset[0] + tabsize * line + cellsize * j + int(cellsize / 3),
+                                      offset[1] + tabsize * row + cellsize * i - int(cellsize / 6)),
+                                     int(28 * fontsize), nowcol, 2)
             j += 1
         i += 1
         j = 0
