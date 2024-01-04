@@ -20,6 +20,7 @@ endcol = (int(_ec[2]), int(_ec[1]), int(_ec[0]))
 nowcol = (int(_nc[2]), int(_nc[1]), int(_nc[0]))
 over = float(data[6])
 nowpoint = data[7]
+roundbias = int(data[8])
 mycfg.close()
 
 # НАСТРОЙКИ
@@ -45,26 +46,33 @@ img = cv2.resize(img, imsize, img)
 lay = np.zeros(shape=[imsize[1], imsize[0], 3], dtype=np.uint8)
 cal = calendar.TextCalendar()
 
-# ФОН И ВЫХОДНЫЕ
+# ФОН И ВЫХОДНЫЕ ДНИ
 line, row, i, j = 0, 0, 0, 0
 for moon in range(12):
+
+    # месяцы
     month = cal.monthdayscalendar(year, moon + 1)
-    lay = cv2.rectangle(lay,
-                        (offset[0] + tabsize * line + tabpad - cellsize,
-                         offset[1] + tabsize * row + tabpad - int(2.5 * cellsize)),
-                        (offset[0] + tabsize * line + tabsize - tabpad - int(0.5 * cellsize),
-                         offset[1] + tabsize * row + tabsize - tabpad - int(2 * cellsize)),
-                        backcol, -1)
+    x1 = offset[0] + tabsize * line + tabpad - cellsize
+    y1 = offset[1] + tabsize * row + tabpad - int(2.5 * cellsize)
+    x2 = offset[0] + tabsize * line + tabsize - tabpad - int(0.5 * cellsize)
+    y2 = offset[1] + tabsize * row + tabsize - tabpad - int(2 * cellsize)
+    lay = cv2.rectangle(lay, (x1 + roundbias, y1), (x2 - roundbias, y2), backcol, -1)
+    lay = cv2.rectangle(lay, (x1, y1 + roundbias), (x2, y2 - roundbias), backcol, -1)
+    lay = cv2.circle(lay, (x1 + roundbias, y1 + roundbias), roundbias, backcol, -1)
+    lay = cv2.circle(lay, (x1 + roundbias, y2 - roundbias), roundbias, backcol, -1)
+    lay = cv2.circle(lay, (x2 - roundbias, y1 + roundbias), roundbias, backcol, -1)
+    lay = cv2.circle(lay, (x2 - roundbias, y2 - roundbias), roundbias, backcol, -1)
+
+    # дни недели
     for week in month:
         dofw = 0
         for day in week:
             dofw += 1
             if day != 0:
                 if dofw > 5:
-                    lay = cv2.circle(lay,
-                                     (offset[0] + tabsize * line + cellsize * j + int(cellsize / 3.5),
-                                      offset[1] + tabsize * row + cellsize * i - int(cellsize / 6)),
-                                     int(30 * fontsize), endcol, -1)
+                    wx = offset[0] + tabsize * line + cellsize * j + int(cellsize / 3.5)
+                    wy = offset[1] + tabsize * row + cellsize * i - int(cellsize / 6)
+                    lay = cv2.circle(lay, (wx, wy), int(30 * fontsize), endcol, -1)
             j += 1
         i += 1
         j = 0
@@ -73,6 +81,8 @@ for moon in range(12):
     if line == table:
         line = 0
         row += 1
+
+# СМЕШЕНИЕ СЛОЕВ
 img = cv2.addWeighted(img, 1, lay, over, 0)
 
 # ТЕКСТ
@@ -81,12 +91,11 @@ line, row, i, j, ch = 0, 0, 0, 0, 0
 for moon in range(12):
     month = cal.monthdayscalendar(year, moon + 1)
 
-    # месяцы
+    # недели месяца
     for week in month:
-        cv2.putText(img, m[moon],
-                    (tabsize * line + offset[0],
-                     tabsize * row + offset[1] - cellsize),
-                    fontmes, 1.5 * fontsize, fontcol)
+        wx = tabsize * line + offset[0]
+        wy = tabsize * row + offset[1] - cellsize
+        cv2.putText(img, m[moon], (wx, wy), fontmes, 1.5 * fontsize, fontcol)
 
         # дни
         for day in week:
@@ -103,7 +112,7 @@ for moon in range(12):
                             fontnums, fontsize, fontcol)
 
             # текущий день
-            if nowpoint == "true":
+            if nowpoint.strip() == "true":
                 if ch == curday and moon + 1 == curmonth and curyear == year:
                     img = cv2.circle(img,
                                      (offset[0] + tabsize * line + cellsize * j + int(cellsize / 3.5),
