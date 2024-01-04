@@ -21,6 +21,7 @@ nowcol = (int(_nc[2]), int(_nc[1]), int(_nc[0]))
 over = float(data[6])
 nowpoint = data[7]
 roundbias = int(data[8])
+blur = int(data[9])
 mycfg.close()
 
 # НАСТРОЙКИ
@@ -82,6 +83,12 @@ for moon in range(12):
         line = 0
         row += 1
 
+# БЛЮР ПЛИТОК
+imgblur = cv2.blur(img, (blur, blur))
+imgtemp = 0 * img
+imgtemp += imgblur * (lay > 0) + img * (lay == 0)
+img = imgtemp
+
 # СМЕШЕНИЕ СЛОЕВ
 img = cv2.addWeighted(img, 1, lay, over, 0)
 
@@ -136,7 +143,7 @@ ctypes.windll.user32.SystemParametersInfoW(20, 0, os.path.abspath(os.curdir) + "
 
 # ТЕСТ
 # img = cv2.resize(img, (960, 540))
-# cv2.imshow("", img)
+# cv2.imshow("low-size test", img)
 # cv2.waitKey()
 
 print("Готово!")

@@ -7,3 +7,4 @@ example.jpg
 0.125
 true
 15
+9
