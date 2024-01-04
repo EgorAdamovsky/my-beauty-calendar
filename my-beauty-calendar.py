@@ -22,12 +22,14 @@ over = float(data[6])
 nowpoint = data[7]
 roundbias = int(data[8])
 blur = int(data[9])
+fordesktop = data[10]
 mycfg.close()
 
 # НАСТРОЙКИ
+deskoffset = 0 if fordesktop.strip() == "true" else 20
 imsize = (1920, 1080)
-offset = (1213, 160)
-yearplace = (1440, 80)
+offset = (1213, 160 + deskoffset)
+yearplace = (1440, 80 + deskoffset)
 cellsize = 28
 tabsize = 230
 tabpad = 16
@@ -92,7 +94,7 @@ img = imgtemp
 # СМЕШЕНИЕ СЛОЕВ
 img = cv2.addWeighted(img, 1, lay, over, 0)
 
-# ТЕКСТ
+# ТЕКСТ И ТЕКУЩИЙ ДЕНЬ
 cv2.putText(img, str(year), yearplace, fontyear, 2.5, fontcol)
 line, row, i, j, ch = 0, 0, 0, 0, 0
 for moon in range(12):

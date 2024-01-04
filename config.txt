@@ -8,3 +8,4 @@ example.jpg
 true
 15
 9
+true
