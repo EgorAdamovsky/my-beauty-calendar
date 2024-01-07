@@ -23,7 +23,8 @@ nowpoint = data[7]
 roundbias = int(data[8])
 blur = int(data[9])
 fordesktop = data[10]
-noworks = data[11]
+noworks = data[11].strip()
+todesk = data[12]
 mycfg.close()
 
 # НАСТРОЙКИ
@@ -159,8 +160,9 @@ fout = "calendar-" + str(year) + ".png"  # название выходного �
 cv2.imwrite(fout, img)  # сохранить изображение
 
 # УСТАНОВКА НА РАБОЧИЙ СТОЛ
-imgpath = os.path.abspath(os.curdir) + "\\" + fout  # определение пути к изображению
-ctypes.windll.user32.SystemParametersInfoW(20, 0, imgpath, 0)  # установить его на рабочий стол
+if todesk.strip() == "true":  # если включена соответствующая опция
+    imgpath = os.path.abspath(os.curdir) + "\\" + fout  # определение пути к изображению
+    ctypes.windll.user32.SystemParametersInfoW(20, 0, imgpath, 0)  # установить его на рабочий стол
 
 # ТЕСТ
 # img = cv2.resize(img, (960, 540))
