@@ -39,6 +39,7 @@ fontsize = 0.4
 fontnums = cv2.FONT_HERSHEY_SCRIPT_COMPLEX
 fontyear = cv2.FONT_HERSHEY_TRIPLEX
 fontmes = cv2.FONT_HERSHEY_COMPLEX
+scale = 2
 m = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
 
 # ПОДГОТОВКА
@@ -148,12 +149,18 @@ for moon in range(12):
         line = 0
         row += 1
 
+# ПОСТОБРАБОТКА
+bigimsize = tuple(int(scale * i) for i in imsize)  # увеличенный размер картинки для сглаживания
+img = cv2.resize(img, bigimsize)  # увеличить размер изображения
+img = cv2.resize(img, imsize)  # вернуть размер изображения
+
 # СОХРАНЕНИЕ
-fout = "calendar-" + str(year) + ".png"
-cv2.imwrite(fout, img)
+fout = "calendar-" + str(year) + ".png"  # название выходного изображения
+cv2.imwrite(fout, img)  # сохранить изображение
 
 # УСТАНОВКА НА РАБОЧИЙ СТОЛ
-ctypes.windll.user32.SystemParametersInfoW(20, 0, os.path.abspath(os.curdir) + "\\" + fout, 0)
+imgpath = os.path.abspath(os.curdir) + "\\" + fout  # определение пути к изображению
+ctypes.windll.user32.SystemParametersInfoW(20, 0, imgpath, 0)  # установить его на рабочий стол
 
 # ТЕСТ
 # img = cv2.resize(img, (960, 540))
