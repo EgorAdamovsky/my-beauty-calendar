@@ -7,7 +7,5 @@ test.png
 /calendar-2024.png
 other/for me.txt
 other/example.jpg
-dist/calendar-2024.png
-dist/test.png
-dist/config.txt
-dist/no-work-by.txt
+dist
+

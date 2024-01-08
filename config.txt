@@ -7,7 +7,7 @@ example.jpg
 0.125
 true
 15
-9
-false
+33
+true
 no-work-by.txt
 true

@@ -49,7 +49,7 @@ python my-beauty-calendar.py
 pyinstaller --onefile my-beauty-calendar.py
 ``` 
 
-5. Скопируйте в каталог с приложением **my-beauty-calendar.exe** файлы **config.txt** и **no-work-by.txt**:
+5. Скопируйте в каталог с приложением **my-beauty-calendar.exe** файлы **config.txt**, **no-work-by.txt** и **ubuntu.ttf**:
 ```
 ...\my-beauty-calendar\dist\my-beauty-calendar.exe
 ```

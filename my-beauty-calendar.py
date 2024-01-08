@@ -1,46 +1,62 @@
+from PIL import ImageFont, ImageDraw, Image
 import numpy as np
 import datetime
 import calendar
 import ctypes
+import time
 import cv2
 import os
 
+# ПРИКОЛ
+print("\n")
+print("\t██   ██ ██    ██  ██████ ██   ██  █████       ██████   █████  ███    ███ ███████ ███████")
+time.sleep(0.5)
+print("\t██  ██  ██    ██ ██      ██   ██ ██   ██     ██       ██   ██ ████  ████ ██      ██")
+time.sleep(0.5)
+print("\t█████   ██    ██ ██      ███████ ███████     ██   ███ ███████ ██ ████ ██ █████   ███████")
+time.sleep(0.5)
+print("\t██  ██  ██    ██ ██      ██   ██ ██   ██     ██    ██ ██   ██ ██  ██  ██ ██           ██")
+time.sleep(0.5)
+print("\t██   ██  ██████   ██████ ██   ██ ██   ██      ██████  ██   ██ ██      ██ ███████ ███████")
+time.sleep(2)
+
 # ЧТЕНИЕ КОНФИГА
-mycfg = open("config.txt", "r")
-data = mycfg.readlines()
-file = data[0].strip()
-year = int(data[1])
-_fc = data[2].split(',')
-_bc = data[3].split(',')
-_ec = data[4].split(',')
-_nc = data[5].split(',')
-fontcol = (int(_fc[2]), int(_fc[1]), int(_fc[0]))
-backcol = (int(_bc[2]), int(_bc[1]), int(_bc[0]))
-endcol = (int(_ec[2]), int(_ec[1]), int(_ec[0]))
-nowcol = (int(_nc[2]), int(_nc[1]), int(_nc[0]))
-over = float(data[6])
-nowpoint = data[7]
-roundbias = int(data[8])
-blur = int(data[9])
-fordesktop = data[10]
-noworks = data[11].strip()
-todesk = data[12]
-mycfg.close()
+mycfg = open("config.txt", "r")  # прочитать файл конфигов
+data = mycfg.readlines()  # прочитать все строки
+file = data[0].strip()  # адрес картинки
+year = int(data[1])  #
+_fc = data[2].split(',')  #
+_bc = data[3].split(',')  #
+_ec = data[4].split(',')  #
+_nc = data[5].split(',')  #
+fontcol = (int(_fc[2]), int(_fc[1]), int(_fc[0]))  #
+backcol = (int(_bc[2]), int(_bc[1]), int(_bc[0]))  #
+endcol = (int(_ec[2]), int(_ec[1]), int(_ec[0]))  #
+nowcol = (int(_nc[2]), int(_nc[1]), int(_nc[0]))  #
+over = float(data[6])  #
+nowpoint = data[7].strip()  #
+roundbias = int(data[8])  #
+blur = int(data[9])  #
+fordesktop = data[10].strip()  #
+noworks = data[11].strip()  #
+todesk = data[12].strip()  #
+mycfg.close()  #
 
 # НАСТРОЙКИ
-deskoffset = 0 if fordesktop.strip() == "true" else 20
+deskoffset = 5 if fordesktop == "true" else 20
 imsize = (1920, 1080)
 offset = (1213, 160 + deskoffset)
-yearplace = (1440, 80 + deskoffset)
+yearplace = (1440, 10 + deskoffset)
 cellsize = 28
 tabsize = 230
 tabpad = 16
 table = 3
 fontsize = 0.4
-fontnums = cv2.FONT_HERSHEY_SCRIPT_COMPLEX
-fontyear = cv2.FONT_HERSHEY_TRIPLEX
-fontmes = cv2.FONT_HERSHEY_COMPLEX
-scale = 2
+fontkoef = 38
+fontname = "ubuntu.ttf"
+pilfontsize = ImageFont.truetype(fontname, int(fontkoef * fontsize))
+pilfontsizemonth = ImageFont.truetype(fontname, int(1.25 * fontkoef * fontsize))
+pilfontsizeyear = ImageFont.truetype(fontname, int(6 * fontkoef * fontsize))
 m = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
 
 # ПОДГОТОВКА
@@ -108,8 +124,11 @@ img = imgtemp
 # СМЕШЕНИЕ СЛОЕВ
 img = cv2.addWeighted(img, 1, lay, over, 0)
 
-# ТЕКСТ И ТЕКУЩИЙ ДЕНЬ
-cv2.putText(img, str(year), yearplace, fontyear, 2.5, fontcol)
+# ТЕКСТ
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+pilimg = Image.fromarray(img)
+draw = ImageDraw.Draw(pilimg)
+draw.text(yearplace, str(year), font=pilfontsizeyear, fill=fontcol, align="center")  # нарисовать год
 line, row, i, j, ch = 0, 0, 0, 0, 0
 for moon in range(12):
     month = cal.monthdayscalendar(year, moon + 1)
@@ -117,25 +136,49 @@ for moon in range(12):
     # недели месяца
     for week in month:
         wx = tabsize * line + offset[0]
-        wy = tabsize * row + offset[1] - cellsize
-        cv2.putText(img, m[moon], (wx, wy), fontmes, 1.5 * fontsize, fontcol)
+        wy = tabsize * row + offset[1] - cellsize - 18
+        draw.text((wx, wy), m[moon], font=pilfontsizemonth, fill=fontcol, align="center")  # нарисовать год
 
         # дни
         for day in week:
             ch += 1
 
             # дни месяца
-            if day != 0:
-                fullday = 0
-                if day < 10:
-                    fullday = 4
-                cv2.putText(img, str(day),
-                            (offset[0] + tabsize * line + cellsize * j + fullday,
-                             offset[1] + tabsize * row + cellsize * i),
-                            fontnums, fontsize, fontcol)
+            if day != 0:  # если день есть в месяце
+                fullday = 1  # смещение для однозначного числа
+                if day < 10:  # если число-таки однозначное
+                    fullday = 5  # смещение становится ненулевым
+                dwx = offset[0] + tabsize * line + cellsize * j + fullday  # точка отрисовки числа по X
+                dwy = offset[1] + tabsize * row + cellsize * i - 12  # точка отрисовки числа по Y
+                draw.text((dwx, dwy), str(day), font=pilfontsize, fill=fontcol, align="center")  # нарисовать число
 
             # текущий день
-            if nowpoint.strip() == "true":
+            if nowpoint == "true":
+                if ch == curday and moon + 1 == curmonth and curyear == year:
+                    img = cv2.circle(img,
+                                     (offset[0] + tabsize * line + cellsize * j + int(cellsize / 3.5),
+                                      offset[1] + tabsize * row + cellsize * i - int(cellsize / 6)),
+                                     int(28 * fontsize), nowcol, 2)
+            j += 1
+        i += 1
+        j = 0
+    line += 1
+    i, j, ch = 0, 0, 0
+    if line == table:
+        line = 0
+        row += 1
+img = cv2.cvtColor(np.array(pilimg), cv2.COLOR_RGB2BGR)
+
+# ТЕКУЩИЙ ДЕНЬ
+line, row, i, j, ch = 0, 0, 0, 0, 0
+for moon in range(12):
+    month = cal.monthdayscalendar(year, moon + 1)
+    for week in month:
+        for day in week:
+            ch += 1
+
+            # текущий день
+            if nowpoint == "true":
                 if ch == curday and moon + 1 == curmonth and curyear == year:
                     img = cv2.circle(img,
                                      (offset[0] + tabsize * line + cellsize * j + int(cellsize / 3.5),
@@ -150,17 +193,12 @@ for moon in range(12):
         line = 0
         row += 1
 
-# ПОСТОБРАБОТКА
-bigimsize = tuple(int(scale * i) for i in imsize)  # увеличенный размер картинки для сглаживания
-img = cv2.resize(img, bigimsize)  # увеличить размер изображения
-img = cv2.resize(img, imsize)  # вернуть размер изображения
-
 # СОХРАНЕНИЕ
 fout = "calendar-" + str(year) + ".png"  # название выходного изображения
 cv2.imwrite(fout, img)  # сохранить изображение
 
 # УСТАНОВКА НА РАБОЧИЙ СТОЛ
-if todesk.strip() == "true":  # если включена соответствующая опция
+if todesk == "true":  # если включена соответствующая опция
     imgpath = os.path.abspath(os.curdir) + "\\" + fout  # определение пути к изображению
     ctypes.windll.user32.SystemParametersInfoW(20, 0, imgpath, 0)  # установить его на рабочий стол
 
@@ -168,5 +206,3 @@ if todesk.strip() == "true":  # если включена соответству
 # img = cv2.resize(img, (960, 540))
 # cv2.imshow("low-size test", img)
 # cv2.waitKey()
-
-print("Готово!")
