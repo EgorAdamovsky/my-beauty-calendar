@@ -8,17 +8,18 @@ import cv2
 import os
 
 # ПРИКОЛ
+microsleep = 0.25
 print("\n")
 print("\t██   ██ ██    ██  ██████ ██   ██  █████       ██████   █████  ███    ███ ███████ ███████")
-time.sleep(0.5)
+time.sleep(microsleep)
 print("\t██  ██  ██    ██ ██      ██   ██ ██   ██     ██       ██   ██ ████  ████ ██      ██")
-time.sleep(0.5)
+time.sleep(microsleep)
 print("\t█████   ██    ██ ██      ███████ ███████     ██   ███ ███████ ██ ████ ██ █████   ███████")
-time.sleep(0.5)
+time.sleep(microsleep)
 print("\t██  ██  ██    ██ ██      ██   ██ ██   ██     ██    ██ ██   ██ ██  ██  ██ ██           ██")
-time.sleep(0.5)
+time.sleep(microsleep)
 print("\t██   ██  ██████   ██████ ██   ██ ██   ██      ██████  ██   ██ ██      ██ ███████ ███████")
-time.sleep(2)
+time.sleep(4 * microsleep)
 
 # ЧТЕНИЕ КОНФИГА
 mycfg = open("config.txt", "r")  # прочитать файл конфигов
@@ -29,7 +30,7 @@ _fc = data[2].split(',')  #
 _bc = data[3].split(',')  #
 _ec = data[4].split(',')  #
 _nc = data[5].split(',')  #
-fontcol = (int(_fc[2]), int(_fc[1]), int(_fc[0]))  #
+fontcol = (int(_fc[0]), int(_fc[1]), int(_fc[2]))  #
 backcol = (int(_bc[2]), int(_bc[1]), int(_bc[0]))  #
 endcol = (int(_ec[2]), int(_ec[1]), int(_ec[0]))  #
 nowcol = (int(_nc[2]), int(_nc[1]), int(_nc[0]))  #
@@ -46,7 +47,7 @@ mycfg.close()  #
 deskoffset = 5 if fordesktop == "true" else 20
 imsize = (1920, 1080)
 offset = (1213, 160 + deskoffset)
-yearplace = (1440, 10 + deskoffset)
+yearplace = (1445, 10 + deskoffset)
 cellsize = 28
 tabsize = 230
 tabpad = 16
@@ -137,7 +138,11 @@ for moon in range(12):
     for week in month:
         wx = tabsize * line + offset[0]
         wy = tabsize * row + offset[1] - cellsize - 18
-        draw.text((wx, wy), m[moon], font=pilfontsizemonth, fill=fontcol, align="center")  # нарисовать год
+
+        ims = 0
+        for ms in m[moon]:
+            draw.text((wx + ims, wy), ms, font=pilfontsizemonth, fill=fontcol, align="center")  # нарисовать год
+            ims += 10
 
         # дни
         for day in week:
