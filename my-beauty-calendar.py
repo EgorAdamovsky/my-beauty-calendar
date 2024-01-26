@@ -8,7 +8,7 @@ import cv2
 import os
 
 # ПРИКОЛ
-microsleep = 0.25
+microsleep = 0.1
 print("\n")
 print("\t██   ██ ██    ██  ██████ ██   ██  █████       ██████   █████  ███    ███ ███████ ███████")
 time.sleep(microsleep)
@@ -47,7 +47,7 @@ mycfg.close()  #
 deskoffset = 5 if fordesktop == "true" else 20
 imsize = (1920, 1080)
 offset = (1213, 160 + deskoffset)
-yearplace = (1445, 10 + deskoffset)
+yearplace = (1400 - 92, 10 + deskoffset)
 cellsize = 28
 tabsize = 230
 tabpad = 16
@@ -129,7 +129,7 @@ img = cv2.addWeighted(img, 1, lay, over, 0)
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 pilimg = Image.fromarray(img)
 draw = ImageDraw.Draw(pilimg)
-draw.text(yearplace, str(year), font=pilfontsizeyear, fill=fontcol, align="center")  # нарисовать год
+draw.text(yearplace, "~  " + str(year) + "  ~", font=pilfontsizeyear, fill=fontcol, align="center")  # нарисовать год
 line, row, i, j, ch = 0, 0, 0, 0, 0
 for moon in range(12):
     month = cal.monthdayscalendar(year, moon + 1)
@@ -157,13 +157,6 @@ for moon in range(12):
                 dwy = offset[1] + tabsize * row + cellsize * i - 12  # точка отрисовки числа по Y
                 draw.text((dwx, dwy), str(day), font=pilfontsize, fill=fontcol, align="center")  # нарисовать число
 
-            # текущий день
-            if nowpoint == "true":
-                if ch == curday and moon + 1 == curmonth and curyear == year:
-                    img = cv2.circle(img,
-                                     (offset[0] + tabsize * line + cellsize * j + int(cellsize / 3.5),
-                                      offset[1] + tabsize * row + cellsize * i - int(cellsize / 6)),
-                                     int(28 * fontsize), nowcol, 2)
             j += 1
         i += 1
         j = 0
@@ -185,11 +178,12 @@ for moon in range(12):
             # текущий день
             if nowpoint == "true":
                 if ch == curday and moon + 1 == curmonth and curyear == year:
-                    img = cv2.circle(img,
-                                     (offset[0] + tabsize * line + cellsize * j + int(cellsize / 3.5),
-                                      offset[1] + tabsize * row + cellsize * i - int(cellsize / 6)),
-                                     int(28 * fontsize), nowcol, 2)
+                    nwdx = offset[0] + tabsize * line + cellsize * j + int(cellsize / 3.5)
+                    nwdy = offset[1] + tabsize * row + cellsize * i - int(cellsize / 6)
+                    img = cv2.circle(img, (nwdx, nwdy), int(28 * fontsize), nowcol, 1)
+                    img = cv2.circle(img, (nwdx, nwdy), int(30 * fontsize), nowcol, 1)
             j += 1
+
         i += 1
         j = 0
     line += 1
