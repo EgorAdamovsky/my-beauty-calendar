@@ -25,23 +25,23 @@ time.sleep(4 * microsleep)
 mycfg = open("config.txt", "r")  # прочитать файл конфигов
 data = mycfg.readlines()  # прочитать все строки
 file = data[0].strip()  # адрес картинки
-year = int(data[1])  #
-_fc = data[2].split(',')  #
-_bc = data[3].split(',')  #
-_ec = data[4].split(',')  #
-_nc = data[5].split(',')  #
-fontcol = (int(_fc[0]), int(_fc[1]), int(_fc[2]))  #
-backcol = (int(_bc[2]), int(_bc[1]), int(_bc[0]))  #
-endcol = (int(_ec[2]), int(_ec[1]), int(_ec[0]))  #
-nowcol = (int(_nc[2]), int(_nc[1]), int(_nc[0]))  #
-over = float(data[6])  #
-nowpoint = data[7].strip()  #
-roundbias = int(data[8])  #
-blur = int(data[9])  #
-fordesktop = data[10].strip()  #
-noworks = data[11].strip()  #
-todesk = data[12].strip()  #
-mycfg.close()  #
+year = int(data[1])  # год
+_fc = data[2].split(',')  # промежуточное, цвет текста
+_bc = data[3].split(',')  # промежуточное, цвет плитки
+_ec = data[4].split(',')  # промежуточное, цвет выходных
+_nc = data[5].split(',')  # промежуточное, цвет сегодня
+fontcol = (int(_fc[0]), int(_fc[1]), int(_fc[2]))  # цвет текста
+backcol = (int(_bc[2]), int(_bc[1]), int(_bc[0]))  # цвет плитки
+endcol = (int(_ec[2]), int(_ec[1]), int(_ec[0]))  # цвет выходных
+nowcol = (int(_nc[2]), int(_nc[1]), int(_nc[0]))  # цвет сегодня
+over = float(data[6])  # непрозрачность плиток
+nowpoint = data[7].strip()  # необходимость отрисовки сегодня
+roundbias = int(data[8])  # скругление плиток
+blur = int(data[9])  # размытие под плитками
+fordesktop = data[10].strip()  # смещение под нижнюю панель рабочего стола
+noworks = data[11].strip()  # файл праздников
+todesk = data[12].strip()  # необходимость установки на рабочий стол
+mycfg.close()  # закрыть файл конфигов
 
 # НАСТРОЙКИ
 deskoffset = 5 if fordesktop == "true" else 20
@@ -171,14 +171,17 @@ img = cv2.cvtColor(np.array(pilimg), cv2.COLOR_RGB2BGR)
 line, row, i, j, ch = 0, 0, 0, 0, 0
 for moon in range(12):
     month = cal.monthdayscalendar(year, moon + 1)
+    bias = 0
     for week in month:
         for day in week:
+            if day == 0:
+                bias += 1
             ch += 1
 
             # текущий день
             if nowpoint == "true":
                 if ch == curday and moon + 1 == curmonth and curyear == year:
-                    nwdx = offset[0] + tabsize * line + cellsize * j + int(cellsize / 3.5)
+                    nwdx = offset[0] + tabsize * line + cellsize * j + bias * cellsize + int(cellsize / 3.5)
                     nwdy = offset[1] + tabsize * row + cellsize * i - int(cellsize / 6)
                     img = cv2.circle(img, (nwdx, nwdy), int(28 * fontsize), nowcol, 1)
                     img = cv2.circle(img, (nwdx, nwdy), int(30 * fontsize), nowcol, 1)
