@@ -171,17 +171,15 @@ img = cv2.cvtColor(np.array(pilimg), cv2.COLOR_RGB2BGR)
 line, row, i, j, ch = 0, 0, 0, 0, 0
 for moon in range(12):
     month = cal.monthdayscalendar(year, moon + 1)
-    bias = 0
     for week in month:
         for day in week:
-            if day == 0:
-                bias += 1
-            ch += 1
+            if day != 0:
+                ch += 1
 
             # текущий день
             if nowpoint == "true":
                 if ch == curday and moon + 1 == curmonth and curyear == year:
-                    nwdx = offset[0] + tabsize * line + cellsize * j + bias * cellsize + int(cellsize / 3.5)
+                    nwdx = offset[0] + tabsize * line + cellsize * j + int(cellsize / 3.5)
                     nwdy = offset[1] + tabsize * row + cellsize * i - int(cellsize / 6)
                     img = cv2.circle(img, (nwdx, nwdy), int(28 * fontsize), nowcol, 1)
                     img = cv2.circle(img, (nwdx, nwdy), int(30 * fontsize), nowcol, 1)
